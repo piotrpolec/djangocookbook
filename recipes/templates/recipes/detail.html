@@ -1,0 +1,20 @@
+<h1> {{ name }}</h1>
+<p> Trudnosc {{ difficulty }}</p>
+<p>Kategorie</p>
+<ul>
+  {% for category in categories %}
+      <li>
+          {{ category }}
+      </li>
+  {% endfor %}
+
+</ul>
+<p>Instrukcja</p>
+<ul>
+  {% for step in steps %}
+      <li>
+          {{ step }}
+      </li>
+  {% endfor %}
+
+</ul>

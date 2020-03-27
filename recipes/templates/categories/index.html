@@ -1,0 +1,6 @@
+<p>works</p>
+<ul>
+    {% for category in categories %}
+        <li><a href="{% url 'category' category.id %}">{{ category.category }}</a></li>
+    {% endfor %}
+</ul>
