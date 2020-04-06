@@ -35,5 +35,6 @@ def category(request, category_id):
     category = get_object_or_404(Category, pk = category_id)
     context = {
         'category' : category,
-        'recipes' : category.recipe_set.all()
+        'recipes' : category.recipe.all()
     }
+    return render(request, 'categories/detail.html', context)
