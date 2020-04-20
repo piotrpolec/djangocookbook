@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/logged-out.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+    <nav class="navbar navbar-dark" style="background-color: rgb(65,118,144);">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#" style="color: rgb(245,221,93);">Cookbook</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="../.." style="color: rgb(245,221,93);">Home</a></li>
+                <li><a href="../../recipes" style="color: rgb(245,221,93);">Recipes</a></li>
+                <li><a href="../../recipes/categories" style="color: rgb(245,221,93);">Categories</a></li>
+                <li><a href="#" style="color: rgb(245,221,93);">Page 3</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li class="justify-content-end"><a href="" style="color: rgb(245,221,93);">Hello {{user.get_username}}</a></li>
+                    <li class="justify-content-end"><a href="accounts/logout" style="color: rgb(245,221,93);">Log Out</a></li>
+                {% else %}
+                    <li class="justify-content-end"><a href="../../accounts/login" style="color: rgb(245,221,93);">Log in</a></li>
+                    <li class="justify-content-end"><a href="../../signup" style="color: rgb(245,221,93);">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+{% block content %}
+    <div style="padding:10px;">
+        <p style="font-size: 20px;">Wylogowano pomyślnie!</p>
+        <p style="display: inline-block; font-size: 20px;">Jeśli chcesz wrócić po więcej</p>
+        <p style="display: inline-block; font-size: 24px;">→</p>
+        <a href="{% url 'login'%}"><button type="button" class="btn btn-primary" onclick="redirect()">Zaloguj się!</button></a>
+    </div>
+{% endblock %}
+</body>
+</html>
