@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cookbook</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    {%block css%}{%endblock%}
+    <link rel="icon" href="static/icon.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-dark" style="background-color: rgb(65,118,144);">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#" style="color: rgb(245,221,93);">Cookbook</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'home' %}" style="color: rgb(245,221,93);">Home</a></li>
+                <li><a href="{% url 'index' %}" style="color: rgb(245,221,93);">Recipes</a></li>
+                <li><a href="{% url 'categories' %}" style="color: rgb(245,221,93);">Categories</a></li>
+                <li><a href="#" style="color: rgb(245,221,93);">Page 3</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li class="justify-content-end"><a href="" style="color: rgb(245,221,93);">Hello {{user.get_username}}</a></li>
+                    <li class="justify-content-end"><a href="{% url 'logout' %}" style="color: rgb(245,221,93);">Log Out</a></li>
+                {% else %}
+                    <li class="justify-content-end"><a href="{% url 'login' %}" style="color: rgb(245,221,93);">Log in</a></li>
+                    <li class="justify-content-end"><a href="{% url 'signup' %}" style="color: rgb(245,221,93);">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {%block content%} {%endblock%}
+</body>
+</html>
