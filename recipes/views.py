@@ -5,7 +5,7 @@ from .models import Recipe, Category
 from django.http import Http404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-
+# from django.db.models import Q
 
 def home(request):
     return render(request, 'Registration/home.html')
@@ -63,3 +63,37 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'Registration/signup.html', {'form': form})
+
+def search(request):
+    query = request.GET.get('q')
+    query = '%' + query + '%'
+    recipes = Recipe.objects.raw(  
+        """SELECT DISTINCT recipes_recipe.id, recipes_recipe.difficulty, recipes_recipe.name, recipes_recipe.image 
+        FROM recipes_recipe 
+        LEFT OUTER JOIN recipes_ingredientinstance_recipe ON (recipes_recipe.id = recipes_ingredientinstance_recipe.recipe_id) 
+        INNER JOIN recipes_ingredientinstance ON recipes_ingredientinstance_recipe.ingredientinstance_id =  recipes_ingredientinstance.id
+        INNER JOIN recipes_ingredient ON recipes_ingredientinstance.ingredient_id = recipes_ingredient.id
+        WHERE (UPPER(recipes_recipe.name) LIKE UPPER(%s) 
+        OR LOWER(recipes_ingredient.name) like %s)""", [query,query])
+    context =  {
+        'recipes': recipes
+    }
+    return render(request, 'recipes/index.html', context)
+
+    # """SELECT DISTINCT recipes_recipe.id, recipes_recipe.difficulty, recipes_recipe.name, recipes_recipe.image 
+    # FROM recipes_recipe 
+    # LEFT OUTER JOIN recipes_ingredientinstance_recipe ON (recipes_recipe.id = recipes_ingredientinstance_recipe.recipe_id) 
+    # INNER JOIN recipes_ingredientinstance ON recipes_ingredientinstance_recipe.ingredientinstance_id =  recipes_ingredientinstance.id
+    # INNER JOIN recipes_ingredient ON recipes_ingredientinstance.ingredient_id = recipes_ingredient.id
+    # WHERE (UPPER(recipes_recipe.name) LIKE UPPER(%s) 
+    # OR recipes_ingredient.name like %s),""" [query,query]
+
+
+
+    # SELECT recipes_recipe.id, recipes_recipe.difficulty, recipes_recipe.name, recipes_recipe.image 
+    # FROM recipes_recipe 
+    # LEFT OUTER JOIN recipes_ingredientinstance_recipe ON (recipes_recipe.id = recipes_ingredientinstance_recipe.recipe_id) 
+    # INNER JOIN recipes_ingredientinstance ON recipes_ingredientinstance_recipe.ingredientinstance_id =  recipes_ingredientinstance.id
+    # INNER JOIN recipes_ingredient ON recipes_ingredientinstance.ingredient_id = recipes_ingredient.id
+    # WHERE (UPPER(recipes_recipe.name) LIKE UPPER('%przecier%') 
+    # OR recipes_ingredient.name like upper('%przecier%')), [query, query]
