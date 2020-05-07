@@ -1,0 +1,20 @@
+{%extends "base/navbar.html"%}
+{%block css%}<link rel="stylesheet" href="/static/signup.css">{%endblock%}
+{%block content%}
+    <div style="padding:10px;">
+    <div class="signup-form-whole">
+        <div class="signup-header col-xs-4 col-xs-offset-4">
+            <p class="signup-header-text">Sign Up Here!</p>
+        </div>
+        <div class="signup-form col-xs-4 col-xs-offset-4">
+            <form method="post" id="signup-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div style="text-align:center;">
+                    <button type="submit" form="signup-form" value="Submit" class="btn btn-primary" style="margin-top: 10px;">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+{%endblock%}
