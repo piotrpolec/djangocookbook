@@ -1,35 +1,7 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/recipe-detail.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</head>
-<body>
-    <nav class="navbar navbar-dark" style="background-color: rgb(65,118,144);">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#" style="color: rgb(245,221,93);">Cookbook</a>
-            </div>
-            <ul class="nav navbar-nav">
-                <li><a href="../.." style="color: rgb(245,221,93);">Home</a></li>
-                <li><a href="../" style="color: rgb(245,221,93);">Recipes</a></li>
-                <li><a href="../categories" style="color: rgb(245,221,93);">Categories</a></li>
-                <li><a href="#" style="color: rgb(245,221,93);">Page 3</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
-                    <li class="justify-content-end"><a href="" style="color: rgb(245,221,93);">Hello {{user.get_username}}</a></li>
-                    <li class="justify-content-end"><a href="../../accounts/logout" style="color: rgb(245,221,93);">Log Out</a></li>
-                {% else %}
-                    <li class="justify-content-end"><a href="../../accounts/login" style="color: rgb(245,221,93);">Log in</a></li>
-                    <li class="justify-content-end"><a href="../../signup" style="color: rgb(245,221,93);">Sign Up</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+ 
+{%extends "base/navbar.html"%}
+{%block css%}<link rel="stylesheet" href="/static/recipe-detail.css">{%endblock%}
+{%block content%}
     <div class="wrapper">
     <h1 style="display: inline-block"> {{ name }}</h1>
     {% if image %}
@@ -42,6 +14,7 @@
             <tr class="info">
                 <th scope="col">Trudność</th>
                 <th scope="col">Kategorie</th>
+                <th scope="col">Składniki</th>
             </tr>
         </thead>
         <tbody>
@@ -57,6 +30,11 @@
                 <td>
                     {% for category in categories %}
                     <p> {{ category }} </p>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for ingredient in ingredients %}
+                    <p>{{ ingredient.ingredient }} {{ ingredient.how_much }} {{ ingredient.how_much_of_what }}</p>
                     {% endfor %}
                 </td>
             </tr>
@@ -78,5 +56,4 @@
         </tbody>
     </table>
     </div>
-</body>
-</html>
+{%endblock%}

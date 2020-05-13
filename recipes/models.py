@@ -23,6 +23,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category
+    
+    def return_category(self):
+        return str(self.category)
 
 
 class Ingredient(models.Model):
@@ -51,6 +54,9 @@ class IngredientInstance(models.Model):
 
     def __str__(self):
         return self.ingredient.name + " " + str(self.how_much) + " " + self.how_much_of_what
+
+    def return_measurement(self):
+        return self.Measurement.choices
 
 
 class Step(models.Model):
