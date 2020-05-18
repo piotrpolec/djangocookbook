@@ -54,5 +54,11 @@
             {% endfor %}
         </tbody>
     </table>
+
+        {%if map%}
+            <div style="width: 40%; display: block; margin:auto;">
+                {{ map|safe }}
+            </div>
+        {%endif%}
     </div>
 {%endblock%}

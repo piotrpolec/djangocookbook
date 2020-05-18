@@ -1,0 +1,178 @@
+{%extends "base/navbar.html"%}
+{%block css%}<link rel="stylesheet" href="/static/add_recipe.css">{%endblock%}
+{%block content%}
+<div style="padding: 10px;">
+    <form method="post" id="add_recipe_form" action="add_recipe_form">
+        {% csrf_token %}
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">Nazwa przepisu:</th>
+                    <th scope="col">Trudność:</th>
+                    <th scope="col">Link do zdjęcia:</th>
+                    <th scope="col">Kraj pochodzenia:</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input id="name" name="name" placeholder="Nazwa przepisu" required><br><br></td>
+                    <td><input type="number" id="difficulty" name="difficulty" min="1" max="5" step="1" required><br><br></td>
+                    <td><input id="image" name="image" placeholder="Link do zdjęcia" required></td>
+                    <td>
+                        <select id="countries" form="add_recipe_form" name="Kraj">
+                            {%for country in country_list%}
+                                <option value="{{country.name}}">{{country.name}}</option>
+                            {%endfor%}
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">Kroki:</th>
+                    <th scope="col">Składniki:</th>
+                    <th scope="col">Kategorie:</th>
+                </tr>
+                <tr>
+                    <td><div id="steps"></div></td>
+                    <td><div id="ingredients"></div></td>
+                    <td><div id="categories"></div></td>
+                </tr>
+                <tr>
+                    <td><button type="button" class="btn btn-primary" onclick="add_step()">Nowy krok</button></td>
+                    <td><button type="button" class="btn btn-primary" onclick="add_ing({{measurement}})">Nowy składnik</button></td>
+                    <td><button type="button" class="btn btn-primary" onclick="add_category()">Nowa kategoria</button></td>
+                </tr>
+                <tr>
+                    <td><button type="button" class="btn btn-primary" onclick="delete_step()">Usuń krok</button></td>
+                    <td><button type="button" class="btn btn-primary" onclick="delete_ing()">Usuń składnik</button></td>
+                    <td><button type="button" class="btn btn-primary" onclick="delete_category()">Usuń kategorię</button></td>
+                </tr>
+                <tr>
+                    <td><button type="submit" class="btn btn-primary" onclick="get_step_i()">Submit</button></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </form>
+    <br>
+</div>
+
+<script>
+    var step_i = 0;
+    function add_step() {
+                var newDiv = document.createElement('DIV');
+                var myDiv = document.getElementById("steps");
+                var input = document.createElement('INPUT');
+                newDiv.id = "step" + step_i;
+                input.name = "step" + step_i;
+                input.placeholder = "Krok";
+                newDiv.appendChild(input);
+                myDiv.appendChild(newDiv);
+                step_i += 1;
+            }
+
+    var ing_i = 0;
+
+
+    function add_ing(measurement) {
+                var newDiv = document.createElement('DIV');
+                var myDiv = document.getElementById("ingredients");
+                var input = document.createElement('INPUT');
+                input.placeholder = "Co?"
+                input.name = "ing" + ing_i;
+                var select = document.createElement('SELECT')
+                select.form = add_recipe_form;
+                var count = measurement.length;
+                    for (var i=0; i<count; i++){
+                        var option = document.createElement('OPTION')
+                        option.value = measurement[i];
+                        var text = document.createTextNode(measurement[i]);
+                        option.appendChild(text);
+                        select.appendChild(option);
+                    }
+                select.name = "select" + ing_i;
+                select.classList.add("custom-select");
+                var how_much_input = document.createElement('INPUT');
+                how_much_input.placeholder = "Ile?"
+                how_much_input.name = "how_much" + ing_i;
+                how_much_input.type = "number";
+                how_much_input.min = "0";
+                how_much_input.step = "0.25";
+                var inputDiv = document.createElement('DIV');
+                var how_much_inputDiv = document.createElement('DIV');
+                var selectDiv = document.createElement('DIV');
+                inputDiv.appendChild(input);
+                how_much_inputDiv.appendChild(how_much_input);
+                selectDiv.appendChild(select);
+                newDiv.appendChild(inputDiv);
+                newDiv.appendChild(how_much_inputDiv);
+                newDiv.appendChild(selectDiv);
+                newDiv.id = "ing" + ing_i;
+                newDiv.classList.add("ingredient_div");
+                myDiv.appendChild(newDiv);
+                ing_i += 1;
+            }
+
+    var cat_i = 0;
+    function add_category(){
+        var newDiv = document.createElement('DIV');
+        var div = document.getElementById("categories");
+        var input = document.createElement('INPUT');
+        newDiv.id = "cat" + cat_i;
+        input.name = "cat" + cat_i;
+        newDiv.appendChild(input);
+        div.appendChild(newDiv);
+        cat_i += 1;
+    }
+
+    function get_step_i(){
+        var form = document.getElementById("add_recipe_form")
+        var input = document.createElement('INPUT');
+        input.name = "i";
+        input.value = step_i;
+        input.type = "hidden";
+        form.appendChild(input);
+        var input2 = document.createElement('INPUT');
+        input2.name = "j";
+        input2.value = ing_i;
+        input2.type = "hidden";
+        form.appendChild(input2);
+        var input3 = document.createElement('INPUT');
+        input3.name = "cat";
+        input3.value = cat_i;
+        input3.type = "hidden";
+        form.appendChild(input3);
+    }
+
+    function delete_category(){
+        if(cat_i > 0){
+            cat_i -= 1;
+            var id = "cat" + cat_i;
+            var div = document.getElementById(id);
+            div.parentNode.removeChild(div);
+        }
+    }
+
+    function delete_step(){
+        if(step_i > 0){
+            step_i -= 1;
+            var div = document.getElementById("step" + step_i);
+            div.parentNode.removeChild(div);
+        }
+    }
+
+    function delete_ing(){
+        if(ing_i > 0){
+            ing_i -= 1;
+            var div = document.getElementById("ing" + ing_i);
+            div.parentNode.removeChild(div);
+        }
+    }
+</script>
+{%endblock%}
