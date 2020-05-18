@@ -7,6 +7,9 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from recipes.models import IngredientInstance
 from recipes import help_functions as hp
+from random import randint
+import folium
+
 
 def home(request):
     return render(request, 'Registration/home.html')
@@ -23,14 +26,15 @@ def index(request):
 def detail(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     context = {
-        'name' : recipe.name,
-        'difficulty' : recipe.difficulty,
-        'image' : recipe.image,
-        'step' : recipe.step_set.all().order_by('number'),
-        'ingredients' : recipe.ingredientinstance_set.all(),
-        'categories' : recipe.category_set.all(),
+        'name': recipe.name,
+        'difficulty': recipe.difficulty,
+        'image': recipe.image,
+        'step': recipe.step_set.all().order_by('number'),
+        'ingredients': recipe.ingredientinstance_set.all(),
+        'categories': recipe.category_set.all(),
         'range_for_stars': range(recipe.difficulty),
         'range_for_rest_stars': range(recipe.difficulty+1, 6),
+        "map": hp.make_map(recipe.country)
     }
     return render(request, 'recipes/detail.html', context)
 
@@ -38,7 +42,7 @@ def detail(request, recipe_id):
 def categories(request):
     categories = Category.objects.all()
     context = {
-        'categories' : categories,
+        'categories': categories,
     }
     return render(request, 'categories/index.html', context)
 
@@ -46,8 +50,8 @@ def categories(request):
 def category(request, category_id):
     category = get_object_or_404(Category, pk = category_id)
     context = {
-        'category' : category,
-        'recipes' : category.recipe.all()
+        'category': category,
+        'recipes': category.recipe.all()
     }
     return render(request, 'categories/detail.html', context)
 
@@ -84,18 +88,28 @@ def search(request):
     return render(request, 'recipes/index.html', context)
 
 
+def random(request):
+    number = len(Recipe.objects.all())
+    return redirect('detail', recipe_id=randint(1, number))
+
+
 def add_recipe(request):
     ii = IngredientInstance()
+    country_list = hp.make_country_list()
+    for country in country_list.get_country_list():
+        print(country.get_name())
     context = {
-        "measurement" : ii.return_measurement()
+        "measurement": ii.return_measurement(),
+        "country_list": country_list.get_country_list()
     }
-    return render(request, 'recipes/add.html', context)
+    return render(request, 'Adding/add_recipe.html', context)
 
 
 def add_recipe_form_sub(request):
     name = request.POST["name"]
     difficulty = request.POST["difficulty"]
     image = request.POST["image"]
+    country = request.POST["Kraj"]
     i = request.POST.get("i", False)
     step_list = []
     for j in range(int(i)):
@@ -109,6 +123,5 @@ def add_recipe_form_sub(request):
     cat_list = []
     for j in range(int(cat_i)):
         cat_list.append(request.POST["cat" + str(j)])
-    hp.add_to_database(name, difficulty, image, step_list, ing_list, cat_list)
-    return render(request, 'Adding/add_recipe.html')
-"""Poprawić selecta, dodać krzyżyki do każdego stepu, kategorii przy dodawniu zamiast usuwać ostatni """
+    hp.add_to_database(name, difficulty, image, step_list, ing_list, cat_list, country, request.user)
+    return render(request, 'Adding/recipe_added.html')

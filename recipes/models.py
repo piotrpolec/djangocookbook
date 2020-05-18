@@ -9,12 +9,17 @@ class Recipe(models.Model):
         MEDIUM = 3
         HARD = 4
         VERY_HARD = 5
-    difficulty = models.IntegerField(choices = Difficulty.choices, default = Difficulty.MEDIUM)
+    difficulty = models.IntegerField(choices=Difficulty.choices, default=Difficulty.MEDIUM)
     name = models.CharField(max_length=100)
     image = models.CharField(max_length=200) #link do obrazka
+    country = models.CharField(max_length=50, default=(0, 0)) #kraj pochodzenia
+    made_by = models.CharField(max_length=50, default="admin")
 
     def __str__(self):
         return self.name
+
+    def get_user(self):
+        return self.made_by
 
 
 class Category(models.Model):
@@ -23,7 +28,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category
-    
+
     def return_category(self):
         return str(self.category)
 
@@ -33,6 +38,9 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.name
+
+    def return_name(self):
+        return str(self.name)
 
 
 class IngredientInstance(models.Model):
@@ -60,7 +68,7 @@ class IngredientInstance(models.Model):
 
 
 class Step(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.DO_NOTHING)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     number = models.IntegerField()
     text = models.CharField(max_length=200)
 
