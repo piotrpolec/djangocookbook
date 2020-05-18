@@ -1,0 +1,37 @@
+{%extends "base/navbar.html"%}
+{%block css%}<link rel="stylesheet" href="/static/recipe.css">{%endblock%}
+{%block content%}
+    <div style="padding: 10px;">
+        <table class="table">
+            <thead>
+                <th scope="col">Wyszukaj przepis lub składnik</th>
+            </thead>
+            <tbody>
+                <tr><td>
+                <form method="GET" action="{%url 'search' %}">
+                    <input name="q" value="{{request.GET.q}}">
+                    <button class="btn" style="background-color: rgb(65,118,144); color:rgb(245,221,93)" type="submit">Search</button>
+                </form>
+                </td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="padding: 10px;">
+    {% if recipes %}
+        <table class="table table-hover">
+            <thead>
+                <th scope="col">Nazwa</th>
+            </thead>
+            <tbody>
+                {% for recipe in recipes %}
+                    <tr>
+                        <td><a href="{% url 'detail' recipe.id %}">{{ recipe.name }}</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% else %}
+    <p>No recipes are available.</p>
+{% endif %}
+    </div>
+{%endblock%}

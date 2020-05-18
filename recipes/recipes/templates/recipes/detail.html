@@ -1,0 +1,58 @@
+{%extends "base/navbar.html"%}
+{%block css%}<link rel="stylesheet" href="/static/recipe-detail.css">{%endblock%}
+{%block content%}
+    <div class="wrapper">
+    <h1 style="display: inline-block"> {{ name }}</h1>
+    {% if image %}
+        <img src="{{ image }}" class="image">
+    {% else %}
+        <p class="image-alt">"Tu powinien być obrazek, ale autor przepisu nie chciał się pochwalić wynikiem ¯\_(ツ)_/¯"</p>
+    {% endif %}
+    <table class="table table-hover stars-table">
+        <thead>
+            <tr class="info">
+                <th scope="col">Trudność</th>
+                <th scope="col">Kategorie</th>
+                <th scope="col">Składniki</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">
+                    {% for i in range_for_stars %}
+                        <p style="color: #ffdf00; font-size: 25px;" class="star">★</p>
+                    {% endfor %}
+                    {% for i in range_for_rest_stars %}
+                        <p style="font-size: 25px;" class="star">★</p>
+                    {% endfor %}
+                </th>
+                <td>
+                    {% for category in categories %}
+                    <p> {{ category }} </p>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for ingredient in ingredients %}
+                    <p>{{ ingredient.ingredient }} {{ ingredient.how_much }} {{ ingredient.how_much_of_what }}</p>
+                    {% endfor %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-hover">
+        <thead>
+            <tr class="info">
+                <th scope="col" colspan="2">Instrukcja</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for step in step %}
+                <tr>
+                    <th scope="row">{{ step.number }}</th>
+                    <td>{{ step.text }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{%endblock%}
