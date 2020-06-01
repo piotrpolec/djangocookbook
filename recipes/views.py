@@ -12,7 +12,7 @@ import folium
 
 
 def home(request):
-    return render(request, 'Registration/home.html')
+    return render(request, 'registration/home.html')
 
 
 def index(request):
@@ -68,20 +68,25 @@ def signup(request):  #przesada przerzucać do nowej aplikacji
             return redirect('home')
     else:
         form = UserCreationForm()
-    return render(request, 'Registration/signup.html', {'form': form})
+    return render(request, 'registration/signup.html', {'form': form})
 
 
 def search(request):
     query = request.GET.get('q')
-    query = '%' + query + '%'
+    query = query.split()
+    final_query = '%('
+    for word in query:
+      final_query += word + '|' 
+    final_query = final_query[0:-1]
+    final_query += ')%'
     recipes = Recipe.objects.raw(
         """SELECT DISTINCT recipes_recipe.id, recipes_recipe.difficulty, recipes_recipe.name, recipes_recipe.image 
         FROM recipes_recipe 
         LEFT OUTER JOIN recipes_ingredientinstance_recipe ON (recipes_recipe.id = recipes_ingredientinstance_recipe.recipe_id) 
         INNER JOIN recipes_ingredientinstance ON recipes_ingredientinstance_recipe.ingredientinstance_id =  recipes_ingredientinstance.id
         INNER JOIN recipes_ingredient ON recipes_ingredientinstance.ingredient_id = recipes_ingredient.id
-        WHERE (UPPER(recipes_recipe.name) LIKE UPPER(%s) 
-        OR LOWER(recipes_ingredient.name) like LOWER(%s))""", [query, query])
+        WHERE (LOWER(recipes_recipe.name) SIMILAR TO (%s) 
+        OR LOWER(recipes_ingredient.name) SIMILAR TO (%s))""", [final_query, final_query])
     context = {
         'recipes': recipes
     }
@@ -103,9 +108,9 @@ def add_recipe(request):
             "measurement": ii.return_measurement(),
             "country_list": country_list.get_country_list()
         }
-        return render(request, 'Adding/add_recipe.html', context)
+        return render(request, 'recipes/add_recipe.html', context)
     else:
-        return render(request, 'BadWay/not_logged.html')
+        return render(request, 'badway/not_logged.html')
 
 
 def add_recipe_form_sub(request):
@@ -128,4 +133,4 @@ def add_recipe_form_sub(request):
     for idx in range(int(category_count)):
         categories_list.append(request.POST["cat" + str(idx)])
     hp.add_to_database(name, difficulty, image, step_list, ingredients_list, categories_list, country, request.user)
-    return render(request, 'Adding/recipe_added.html')
+    return render(request, 'adding/recipe_added.html')
