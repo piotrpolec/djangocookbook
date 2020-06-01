@@ -133,4 +133,4 @@ def add_recipe_form_sub(request):
     for idx in range(int(category_count)):
         categories_list.append(request.POST["cat" + str(idx)])
     hp.add_to_database(name, difficulty, image, step_list, ingredients_list, categories_list, country, request.user)
-    return render(request, 'adding/recipe_added.html')
+    return render(request, 'recipes/recipe_added.html')
