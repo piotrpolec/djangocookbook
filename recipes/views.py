@@ -7,7 +7,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from recipes.models import IngredientInstance
 from recipes import help_functions as hp
-from random import randint
+import random
 import folium
 
 
@@ -81,28 +81,31 @@ def search(request):
         INNER JOIN recipes_ingredientinstance ON recipes_ingredientinstance_recipe.ingredientinstance_id =  recipes_ingredientinstance.id
         INNER JOIN recipes_ingredient ON recipes_ingredientinstance.ingredient_id = recipes_ingredient.id
         WHERE (UPPER(recipes_recipe.name) LIKE UPPER(%s) 
-        OR LOWER(recipes_ingredient.name) like %s)""", [query, query])
+        OR LOWER(recipes_ingredient.name) like LOWER(%s))""", [query, query])
     context = {
         'recipes': recipes
     }
     return render(request, 'recipes/index.html', context)
 
 
-def random(request):
-    number = len(Recipe.objects.all())
-    return redirect('detail', recipe_id=randint(1, number))
+def random_recipe(request):
+    numbers = Recipe.objects.values_list('id', flat=True)
+    return redirect('detail', recipe_id=random.choice(numbers))
 
 
 def add_recipe(request):
-    ii = IngredientInstance()
-    country_list = hp.make_country_list()
-    for country in country_list.get_country_list():
-        print(country.get_name())
-    context = {
-        "measurement": ii.return_measurement(),
-        "country_list": country_list.get_country_list()
-    }
-    return render(request, 'Adding/add_recipe.html', context)
+    if request.user.is_authenticated:
+        ii = IngredientInstance()
+        country_list = hp.make_country_list()
+        for country in country_list.get_country_list():
+            print(country.get_name())
+        context = {
+            "measurement": ii.return_measurement(),
+            "country_list": country_list.get_country_list()
+        }
+        return render(request, 'Adding/add_recipe.html', context)
+    else:
+        return render(request, 'BadWay/not_logged.html')
 
 
 def add_recipe_form_sub(request):
@@ -110,18 +113,19 @@ def add_recipe_form_sub(request):
     difficulty = request.POST["difficulty"]
     image = request.POST["image"]
     country = request.POST["Kraj"]
-    i = request.POST.get("i", False)
+    steps_count = request.POST.get("i", False)
     step_list = []
-    for j in range(int(i)):
-        step_list.append(request.POST["step" + str(j)])
-    k = request.POST.get("j", False)
-    ing_list = []
-    for j in range(int(k)):
-        tuple = (request.POST["ing" + str(j)], request.POST["how_much" + str(j)], request.POST["select" + str(j)])
-        ing_list.append(tuple)
-    cat_i = request.POST.get("cat", False)
-    cat_list = []
-    for j in range(int(cat_i)):
-        cat_list.append(request.POST["cat" + str(j)])
-    hp.add_to_database(name, difficulty, image, step_list, ing_list, cat_list, country, request.user)
+    for idx in range(int(steps_count)):
+        step_list.append(request.POST["step" + str(idx)])
+    ingredient_count = request.POST.get("j", False)
+    ingredients_list = []
+    for idx in range(int(ingredient_count)):
+        one_ingredient = (request.POST["ing" + str(idx)], request.POST["how_much" + str(idx)],
+                          request.POST["select" + str(idx)])
+        ingredients_list.append(one_ingredient)
+    category_count = request.POST.get("cat", False)
+    categories_list = []
+    for idx in range(int(category_count)):
+        categories_list.append(request.POST["cat" + str(idx)])
+    hp.add_to_database(name, difficulty, image, step_list, ingredients_list, categories_list, country, request.user)
     return render(request, 'Adding/recipe_added.html')
