@@ -20,7 +20,7 @@ decorator==4.4.2
 defer==1.0.6
 defusedxml==0.6.0
 distro-info===0.18ubuntu0.18.04.1
-Django==3.0.5
+Django==3.1.13
 django-hamlpy==1.2
 django-picklefield==2.1.1
 django-q==1.2.1
